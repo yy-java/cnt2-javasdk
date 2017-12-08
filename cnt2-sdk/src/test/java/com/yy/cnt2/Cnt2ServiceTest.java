@@ -1,5 +1,22 @@
 package com.yy.cnt2;
 
+import static com.coreos.jetcd.data.ByteSequence.fromString;
+import static com.yy.cnt2.util.PathHelper.createProfilePath;
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import com.coreos.jetcd.Client;
 import com.coreos.jetcd.ClientBuilder;
 import com.coreos.jetcd.exception.AuthFailedException;
@@ -10,23 +27,7 @@ import com.yy.cnt2.domain.ConfigNode;
 import com.yy.cnt2.domain.ConfigPublishInfo;
 import com.yy.cnt2.event.AbstractEventHandler;
 import com.yy.cnt2.server.ConfigCenterTestServer;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static com.coreos.jetcd.data.ByteSequence.fromString;
-import static com.yy.cnt2.util.PathHelper.createProfilePath;
-import static com.yy.cs.base.json.Json.ObjToStr;
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.yy.cnt2.util.Json;
 
 /**
  * @author xlg
@@ -46,8 +47,7 @@ public class Cnt2ServiceTest {
     public void init() throws AuthFailedException, ConnectException {
         ConfigCenterTestServer.startServer(8888, 9999);
 
-        cnt2Service = new Cnt2Service(appName, profile, localFilePath, null, null,
-                configCenterEndpoints, null);
+        cnt2Service = new Cnt2Service(appName, profile, localFilePath, null, null, configCenterEndpoints, null);
 
         etcdClient = ClientBuilder.newBuilder().setEndpoints("http://localhost:2379").build();
 
@@ -67,15 +67,15 @@ public class Cnt2ServiceTest {
         cnt2Service.registerEventHandler(handler);
         String path = createProfilePath(appName, profile) + "/" + handler.getKey();
 
-        ConfigNode configNode = new ConfigNode(appName, profile, handler.getKey(), 999,
-                new ConfigPublishInfo("PublishId", handler.getKey(), 999, asList(cnt2Service.configAppInfo.getNodeId())));
+        ConfigNode configNode = new ConfigNode(appName, profile, handler.getKey(), 999, new ConfigPublishInfo(
+                "PublishId", handler.getKey(), 999, asList(cnt2Service.configAppInfo.getNodeId())));
 
-        //Gray target
-        etcdClient.getKVClient().put(fromString(path), fromString(ObjToStr(configNode))).get();
+        // Gray target
+        etcdClient.getKVClient().put(fromString(path), fromString(Json.ObjToStr(configNode))).get();
 
-        //Not Gray target
+        // Not Gray target
         configNode.getPublishInfo().setPublishNodes(asList("not exists"));
-        etcdClient.getKVClient().put(fromString(path), fromString(ObjToStr(configNode))).get();
+        etcdClient.getKVClient().put(fromString(path), fromString(Json.ObjToStr(configNode))).get();
 
         block(10);
     }
@@ -95,8 +95,8 @@ public class Cnt2ServiceTest {
                         new ConfigPublishInfo(UUID.randomUUID().toString(), key, version.get(), null));
                 String path = createProfilePath(appName, profile) + "/" + key;
                 try {
-                    System.out.println("Put:" + path + " Data:" + ObjToStr(configNode));
-                    etcdClient.getKVClient().put(fromString(path), fromString(ObjToStr(configNode))).get();
+                    System.out.println("Put:" + path + " Data:" + Json.ObjToStr(configNode));
+                    etcdClient.getKVClient().put(fromString(path), fromString(Json.ObjToStr(configNode))).get();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

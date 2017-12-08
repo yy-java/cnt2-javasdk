@@ -4,7 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.yy.cnt2.domain.HostInfo;
-import com.yy.cs.base.hostinfo.NetType;
+import com.yy.cnt2.util.NetType;
 import io.grpc.*;
 import io.grpc.LoadBalancer.SubchannelPicker;
 
@@ -18,7 +18,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.yy.cnt2.client.Consts.IP_NET_TYPE_MAP_KEY;
 import static com.yy.cnt2.client.Consts.SERVICE_GROUP_ID_KEY;
-import static com.yy.cs.base.hostinfo.NetType.CTL;
 import static io.grpc.ConnectivityState.*;
 
 /**
@@ -71,7 +70,7 @@ public class SameGroupPriorityLoadBalancerFactory extends LoadBalancer.Factory {
                 Map<String, NetType> netTypeMap = attributes.get(IP_NET_TYPE_MAP_KEY);
                 Integer groupId = attributes.get(SERVICE_GROUP_ID_KEY);
                 //优先使用电信网
-                SocketAddress address = pickAddressByNetTypeOrPickFirstIfNotFound(addresses, netTypeMap, CTL);
+                SocketAddress address = pickAddressByNetTypeOrPickFirstIfNotFound(addresses, netTypeMap, NetType.CTL);
                 if (null == address) {
                     continue;
                 }

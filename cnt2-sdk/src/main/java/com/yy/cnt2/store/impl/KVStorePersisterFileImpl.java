@@ -8,8 +8,8 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.yy.cnt2.store.ConfigValue;
 import com.yy.cnt2.store.KVStore;
 import com.yy.cnt2.store.KVStorePersister;
+import com.yy.cnt2.util.Json;
 import com.yy.cnt2.util.PathHelper;
-import com.yy.cs.base.json.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,62 +1,31 @@
-package com.yy.cnt2.domain;
-
-import com.google.common.collect.Maps;
-import com.yy.cnt2.util.IpInfo;
-import com.yy.cnt2.util.NetType;
-import com.yy.cnt2.util.OriginHostInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package com.yy.cnt2.util;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Properties;
 
-/**
- *
- *
- * @author xlg
- * @since 2017/7/12
- */
-public class HostInfo {
-    private static final Logger log = LoggerFactory.getLogger(HostInfo.class);
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    private String areaId;
-    private String cityId;
-    private Map<NetType, IpInfo> ipList;
-    private String priGroupId;
+public class HostInfoHelper {
 
+    private static final Logger log = LoggerFactory.getLogger(HostInfoHelper.class);
+    private static final String DEFAULT_FILE_PATH = "/home/dspeak/yyms/hostinfo.ini";
 
-
-    private static HostInfo INSTANCE = new HostInfo();
     private static Properties properties;
     private static OriginHostInfo origInfo;
 
-    private static final String DEFAULT_FILE_PATH = "/home/dspeak/yyms/hostinfo.ini";
-
-    private HostInfo() {
-    }
-
     static {
-        init();
-        if (null != origInfo) {
-            INSTANCE.areaId = origInfo.getArea_id();
-            INSTANCE.cityId = origInfo.getCity_id();
-            INSTANCE.priGroupId = origInfo.getPri_group_id();
-            INSTANCE.ipList = Collections.unmodifiableMap(parseIpInfos(origInfo.getIp_isp_list()));
-        }
+        readFileData();
     }
 
-    public static HostInfo get() {
-        return INSTANCE;
-    }
-
-    private static void init() {
+    private static void readFileData() {
         File file = new File(DEFAULT_FILE_PATH);
-        if (file.exists() && file.isFile() && file.canRead()) {
-            try (BufferedReader in = new BufferedReader(new FileReader(file))) {
+        if(file.exists() && file.isFile() && file.canRead()){
+            BufferedReader in = null;
+            try {
+                in = new BufferedReader(new FileReader(file));
                 properties = new Properties();
                 properties.load(in);
                 if (log.isDebugEnabled()) {
@@ -66,8 +35,15 @@ public class HostInfo {
                 }
                 parseProperties();
             } catch (Exception e) {
-
                 log.error("read data info error:", e);
+            } finally {
+                if (null != in) {
+                    try {
+                        in.close();
+                    } catch (Exception e) {
+
+                    }
+                }
             }
         }
     }
@@ -100,39 +76,12 @@ public class HostInfo {
         origInfo.setGroup_id(properties.getProperty("group_id"));
     }
 
-    private static Map<NetType, IpInfo> parseIpInfos(String ipInfos) {
-        Map<NetType, IpInfo> map = Maps.newHashMap();
-        if (null == ipInfos) {
-            return map;
-        }
-        String[] ips = ipInfos.split(",");
-        for (String ip : ips) {
-            String[] info = ip.split(":");
-            NetType nt = null;
-            try {
-                nt = NetType.valueOf(info[1]);
-            } catch (Exception e) {
-            }
-            if (null != nt) {
-                map.put(nt, new IpInfo(info[0], nt));
-            }
-        }
-        return map;
+    public static HostInfo getHostInfo() {
+        return HostInfo.parse(origInfo);
     }
 
-    public String getAreaId() {
-        return areaId;
+    public static void main(String[] args) {
+        System.out.println(HostInfoHelper.getHostInfo());
     }
 
-    public String getCityId() {
-        return cityId;
-    }
-
-    public Map<NetType, IpInfo> getIpList() {
-        return ipList;
-    }
-
-    public String getPriGroupId() {
-        return priGroupId;
-    }
 }

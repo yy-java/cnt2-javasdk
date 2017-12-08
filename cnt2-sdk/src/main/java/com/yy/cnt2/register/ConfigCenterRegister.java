@@ -13,7 +13,7 @@ import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.yy.cnt2.client.ConfigCenterClient;
 import com.yy.cnt2.domain.RegisterNode;
-import com.yy.cs.base.json.Json;
+import com.yy.cnt2.util.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

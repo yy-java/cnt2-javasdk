@@ -18,7 +18,7 @@ import com.yy.cnt2.grpc.api.ResponseMessage;
 import com.yy.cnt2.store.ConfigValue;
 import com.yy.cnt2.store.KVStore;
 import com.yy.cnt2.store.KVStorePersister;
-import com.yy.cs.base.json.Json;
+import com.yy.cnt2.util.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -186,7 +186,7 @@ public class EventWatcher implements Closeable {
                 // Query new value
                 String appName = configAppInfo.getAppName();
                 String profile = configAppInfo.getProfile();
-                ResponseMessage message = configCenterClient.queryKey(appName, profile, key, publishInfo.getVersion());
+                com.yy.cnt2.grpc.api.ResponseMessage message = configCenterClient.queryKey(appName, profile, key, publishInfo.getVersion());
 
                 String newValue = message.getValue();
 

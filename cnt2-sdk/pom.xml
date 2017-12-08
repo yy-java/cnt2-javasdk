@@ -32,16 +32,6 @@
             <artifactId>cnt-api</artifactId>
             <version>${version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.yy.cs</groupId>
-            <artifactId>cs-base</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>redis.clients</groupId>
-                    <artifactId>jedis</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
         <dependency>
             <groupId>com.coreos</groupId>

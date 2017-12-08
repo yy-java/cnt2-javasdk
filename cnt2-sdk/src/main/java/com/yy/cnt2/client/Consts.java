@@ -1,6 +1,7 @@
 package com.yy.cnt2.client;
 
-import com.yy.cs.base.hostinfo.NetType;
+
+import com.yy.cnt2.util.NetType;
 
 import java.util.Map;
 

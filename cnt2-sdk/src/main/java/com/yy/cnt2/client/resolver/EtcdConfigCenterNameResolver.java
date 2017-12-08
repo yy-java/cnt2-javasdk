@@ -13,7 +13,8 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.yy.cnt2.client.Consts;
 import com.yy.cnt2.domain.GrpcServerRegisterInfo;
-import com.yy.cs.base.hostinfo.NetType;
+import com.yy.cnt2.util.Json;
+import com.yy.cnt2.util.NetType;
 import io.grpc.Attributes;
 import io.grpc.EquivalentAddressGroup;
 import io.grpc.internal.SharedResourceHolder;
@@ -30,7 +31,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static com.yy.cnt2.util.NetWorkUtils.toNetType;
-import static com.yy.cs.base.json.Json.strToObj;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 /**
@@ -57,9 +57,7 @@ public class EtcdConfigCenterNameResolver extends AbstractConfigCenterNameResolv
             Client client) {
 
         super(name, executorResource);
-
         this.client = client;
-
         try {
             init();
         } catch (Exception e) {
@@ -127,7 +125,7 @@ public class EtcdConfigCenterNameResolver extends AbstractConfigCenterNameResolv
     }
 
     private GrpcServerRegisterInfo parseGrpcServerRegisterInfo(String registerInfo) {
-        return strToObj(registerInfo, GrpcServerRegisterInfo.class);
+        return Json.strToObj(registerInfo, GrpcServerRegisterInfo.class);
     }
 
     @Override

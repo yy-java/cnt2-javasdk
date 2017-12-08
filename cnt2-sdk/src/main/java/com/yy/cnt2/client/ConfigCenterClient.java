@@ -50,7 +50,7 @@ public class ConfigCenterClient implements Closeable {
         int pid = ProgressUtil.getPid();
         String ip = NetWorkUtils.getAppServerIp();
 
-        RegisterRequest.Builder request = RegisterRequest.newBuilder();
+        com.yy.cnt2.grpc.api.RegisterRequest.Builder request = com.yy.cnt2.grpc.api.RegisterRequest.newBuilder();
         request.setApp(appName).setProfile(profile).setServerIp(ip).setPid(String.valueOf(pid));
 
         RegisterResponse response = getResult(this.stub.registerClient(request.build()));

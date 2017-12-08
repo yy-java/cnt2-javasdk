@@ -1,9 +1,6 @@
 package com.yy.cnt2.util;
 
-import com.yy.cs.base.hostinfo.HostInfo;
-import com.yy.cs.base.hostinfo.HostInfoHelper;
-import com.yy.cs.base.hostinfo.IpInfo;
-import com.yy.cs.base.hostinfo.NetType;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.Inet4Address;

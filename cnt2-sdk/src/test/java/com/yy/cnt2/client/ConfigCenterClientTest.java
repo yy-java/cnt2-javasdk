@@ -1,5 +1,16 @@
 package com.yy.cnt2.client;
 
+import static com.coreos.jetcd.data.ByteSequence.fromString;
+import static com.yy.cnt2.client.resolver.EtcdConfigCenterNameResolver.SERVER_REG_PATH;
+
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import com.coreos.jetcd.Client;
 import com.coreos.jetcd.ClientBuilder;
 import com.coreos.jetcd.KV;
@@ -9,18 +20,8 @@ import com.google.common.collect.ImmutableMap;
 import com.yy.cnt2.domain.GrpcServerRegisterInfo;
 import com.yy.cnt2.grpc.api.ResponseMessage;
 import com.yy.cnt2.server.ConfigCenterTestServer;
-import com.yy.cs.base.hostinfo.NetType;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import static com.coreos.jetcd.data.ByteSequence.fromString;
-import static com.yy.cnt2.client.resolver.EtcdConfigCenterNameResolver.SERVER_REG_PATH;
-import static com.yy.cs.base.json.Json.ObjToStr;
+import com.yy.cnt2.util.Json;
+import com.yy.cnt2.util.NetType;
 
 /**
  * @author xlg
@@ -51,14 +52,14 @@ public class ConfigCenterClientTest {
         grpcServerRegisterInfo.setPort(8888);
         grpcServerRegisterInfo.setServerIP(ImmutableMap.of(String.valueOf(NetType.CTL.getValue()), "127.0.0.1"));
 
-        kvClient.put(fromString(SERVER_REG_PATH + "service1"), fromString(ObjToStr(grpcServerRegisterInfo)));
+        kvClient.put(fromString(SERVER_REG_PATH + "service1"), fromString(Json.ObjToStr(grpcServerRegisterInfo)));
 
         grpcServerRegisterInfo = new GrpcServerRegisterInfo();
         grpcServerRegisterInfo.setGroupId(456);
         grpcServerRegisterInfo.setPort(9999);
         grpcServerRegisterInfo.setServerIP(ImmutableMap.of(String.valueOf(NetType.CTL.getValue()), "127.0.0.1"));
 
-        kvClient.put(fromString(SERVER_REG_PATH + "service2"), fromString(ObjToStr(grpcServerRegisterInfo)));
+        kvClient.put(fromString(SERVER_REG_PATH + "service2"), fromString(Json.ObjToStr(grpcServerRegisterInfo)));
 
     }
 
@@ -125,7 +126,7 @@ public class ConfigCenterClientTest {
     public void valueChangeResultNotify() throws Exception {
         initFromLocal();
         String nodeId = configCenterClient.registerClient(app, profile);
-        boolean notify = configCenterClient.valueChangeResultNotify(nodeId, app, profile, "configKey3", "deployId",1,
+        boolean notify = configCenterClient.valueChangeResultNotify(nodeId, app, profile, "configKey3", "deployId", 1,
                 true);
         System.out.println(notify);
     }
